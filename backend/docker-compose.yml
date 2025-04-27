@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: restaurants-backend
+    restart: unless-stopped
+    ports:
+      - "8085:8085"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - PORT=8085
+    volumes:
+      - ./static:/app/static
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://localhost:8085/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - restaurants-network
+
+networks:
+  restaurants-network:
+    driver: bridge
